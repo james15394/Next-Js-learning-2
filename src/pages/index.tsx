@@ -6,6 +6,7 @@ import { PlayCircleOutline } from "@material-ui/icons";
 import { Clear } from "@material-ui/icons";
 import fetch from "isomorphic-unfetch";
 import Link from "next/link";
+import { Data } from "../components/types";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme) =>
     },
   })
 );
-export default function Home({ data }) {
+export default function Home({ data }: Data) {
   const classes = useStyles();
   const posts = data.data;
   const handleDelete = async (id: string) => {
