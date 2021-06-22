@@ -9,6 +9,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import fetch from "isomorphic-unfetch";
 import { useRouter } from "next/router";
+import { Info, Post } from "../../../components/types";
+
 
 interface IFormInput {
   title: string;
@@ -56,8 +58,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Edit = ({ post }) => {
-  const { title, content, detail, author } = post.data;
+const Edit = ({ post }: { post: Info }) => {
+  const { title, content, detail, author } = post;
   const {
     control,
     handleSubmit,
@@ -69,7 +71,6 @@ const Edit = ({ post }) => {
     reValidateMode: "onChange",
   });
   const watchAllFields = watch();
-  console.log(watchAllFields);
   const classes = useStyles();
   const router = useRouter();
   const id = router.query.id;
@@ -186,18 +187,19 @@ const Edit = ({ post }) => {
 
 export async function getStaticPaths() {
   const res = await fetch("http://localhost:3000/api");
-  const posts = await res.json();
-  const paths = posts.data.map((post) => ({
+  const data = await res.json();
+  const posts = data.data;
+  const paths = posts.map((post: Info) => ({
     params: { id: post._id },
   }));
 
   return { paths, fallback: false };
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params }: { params: { id: string } }) {
   const res = await fetch(`http://localhost:3000/api/${params.id}`);
   const post = await res.json();
-  return { props: { post } };
+  return { props: { post: post.data } };
 }
 
 export default Edit;
