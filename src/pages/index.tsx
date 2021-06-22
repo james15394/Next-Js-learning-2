@@ -6,7 +6,7 @@ import { PlayCircleOutline } from "@material-ui/icons";
 import { Clear } from "@material-ui/icons";
 import fetch from "isomorphic-unfetch";
 import Link from "next/link";
-import { Data } from "../components/types";
+import { Data, Info, Post } from "../components/types";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -37,9 +37,8 @@ const useStyles = makeStyles((theme) =>
     },
   })
 );
-export default function Home({ data }: Data) {
+export default function Home({ posts }: Data) {
   const classes = useStyles();
-  const posts = data.data;
   const handleDelete = async (id: string) => {
     console.log(id);
     try {
@@ -54,7 +53,7 @@ export default function Home({ data }: Data) {
   return (
     <main className={classes.root}>
       <Grid container spacing={3} className={classes.container}>
-        {posts.map((post) => (
+        {posts.map((post: Info) => (
           <Grid item xs={12} id={post._id}>
             <Paper className={classes.item}>
               <Link href={`/post/${post._id}`}>
@@ -83,6 +82,7 @@ export default function Home({ data }: Data) {
 export async function getStaticProps() {
   const res = await fetch("http://localhost:3000/api");
   const data = await res.json();
+    const posts = [...data.data];
 
   if (!data) {
     return {
@@ -90,7 +90,7 @@ export async function getStaticProps() {
     };
   }
   return {
-    props: { data },
+    props: { posts },
     revalidate: 1,
   };
 }
