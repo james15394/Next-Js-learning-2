@@ -6,6 +6,8 @@ import ClearIcon from "@material-ui/icons/Clear";
 import { Button } from "@material-ui/core";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { Info } from "../../../components/types";
+
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -23,8 +25,8 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const Post = ({ post }) => {
-  const { title, author, detail } = post.data;
+const Post = ({ post }: { post: Info }) => {
+  const { title, author, detail } = post;
   const classes = useStyles();
   const router = useRouter();
   const id = router.query.id;
@@ -63,16 +65,16 @@ const Post = ({ post }) => {
 
 export async function getStaticPaths() {
   const res = await fetch("http://localhost:3000/api");
-  const posts = await res.json();
-  console.log(posts);
-  const paths = posts.data.map((post) => ({
+    const data = await res.json();
+  const posts = data.data;
+  const paths = posts.data.map((post: Info) => ({
     params: { id: post._id },
   }));
 
   return { paths, fallback: false };
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params }: { params: { id: string } }) {
   const res = await fetch(`http://localhost:3000/api/${params.id}`);
   const post = await res.json();
   return { props: { post } };
