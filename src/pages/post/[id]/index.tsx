@@ -7,6 +7,7 @@ import { Button } from "@material-ui/core";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Info } from "../../../components/types";
+import { getData, getDataAll } from "../../../../utils/dbConnect";
 
 
 const useStyles = makeStyles((theme) =>
@@ -64,7 +65,7 @@ const Post = ({ post }: { post: Info }) => {
 };
 
 export async function getStaticPaths() {
-  const res = await fetch("http://localhost:3000/api");
+   const res = await getDataAll();
     const data = await res.json();
   const posts = data.data;
   const paths = posts.data.map((post: Info) => ({
@@ -75,7 +76,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: { params: { id: string } }) {
-  const res = await fetch(`http://localhost:3000/api/${params.id}`);
+  const res = await getData({ params });
   const post = await res.json();
   return { props: { post } };
 }
