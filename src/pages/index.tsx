@@ -7,6 +7,8 @@ import { Clear } from "@material-ui/icons";
 import fetch from "isomorphic-unfetch";
 import Link from "next/link";
 import { Data, Info, Post } from "../components/types";
+import { getDataAll } from "../../utils/dbConnect";
+
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -80,7 +82,7 @@ export default function Home({ posts }: Data) {
 }
 
 export async function getStaticProps() {
-  const res = await fetch("http://localhost:3000/api");
+  const res = await getDataAll();
   const data = await res.json();
     const posts = [...data.data];
 
