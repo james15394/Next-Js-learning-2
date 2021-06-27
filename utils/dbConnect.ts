@@ -15,5 +15,10 @@ const connectDB = async () => {
     console.log(error);
   }
 };
-
+export const getData = ({ params }: { params: { id: string } }) => {
+  return fetch(`http://localhost:3000/api/${params.id}`);
+};
+export const getDataAll = () => {
+  return fetch(`http://localhost:3000/api`);
+};
 export default connectDB;
