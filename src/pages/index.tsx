@@ -7,7 +7,8 @@ import { Clear } from "@material-ui/icons";
 import fetch from "isomorphic-unfetch";
 import Link from "next/link";
 import { Data, Info, Post } from "../components/types";
-import { getDataAll } from "../../utils/dbConnect";
+import connectDB, { getDataAll } from "../../utils/dbConnect";
+import Posts from "../../model/Post";
 
 
 const useStyles = makeStyles((theme) =>
@@ -82,17 +83,15 @@ export default function Home({ posts }: Data) {
 }
 
 export async function getStaticProps() {
-  const res = await getDataAll();
-  const data = await res.json();
-    const posts = [...data.data];
-
-  if (!data) {
+  await connectDB();
+  const posts = await Posts.find().lean();
+  if (!posts) {
     return {
       notFound: true,
     };
   }
   return {
-    props: { posts },
+    props: { posts: JSON.parse(JSON.stringify(posts)) },
     revalidate: 1,
   };
 }
