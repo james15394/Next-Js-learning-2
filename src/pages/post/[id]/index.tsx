@@ -7,7 +7,8 @@ import { Button } from "@material-ui/core";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Info } from "../../../components/types";
-import { getData, getDataAll } from "../../../../utils/dbConnect";
+import connectDB, { getData, getDataAll } from "../../../../utils/dbConnect";
+import Posts from "../../../../model/Post";
 
 
 const useStyles = makeStyles((theme) =>
@@ -65,10 +66,10 @@ const Post = ({ post }: { post: Info }) => {
 };
 
 export async function getStaticPaths() {
-   const res = await getDataAll();
-    const data = await res.json();
-  const posts = data.data;
-  const paths = posts.data.map((post: Info) => ({
+  await connectDB();
+  const data = await Posts.find().lean();
+  const posts = JSON.parse(JSON.stringify(data));
+  const paths = posts.map((post: Info) => ({
     params: { id: post._id },
   }));
 
@@ -76,8 +77,8 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: { params: { id: string } }) {
-  const res = await getData({ params });
-  const post = await res.json();
-  return { props: { post } };
+  await connectDB();
+  const post = await Posts.findById(params.id);
+  return { props: { post: JSON.parse(JSON.stringify(post)) } };
 }
 export default Post;
