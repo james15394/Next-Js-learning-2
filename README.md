@@ -23,4 +23,6 @@
 * getStaticProps
 * getStaticPaths
 
+<a href="https://next-js-learning-etengstrx-james15394.vercel.app/">Visit the link</a>
+
 
