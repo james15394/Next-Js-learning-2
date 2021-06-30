@@ -10,6 +10,8 @@ import * as yup from "yup";
 import fetch from "isomorphic-unfetch";
 import { useRouter } from "next/router";
 import { Info, Post } from "../../../components/types";
+import connectDB from "../../../../utils/dbConnect";
+import Posts from "../../../../model/Post";
 
 
 interface IFormInput {
@@ -186,9 +188,9 @@ const Edit = ({ post }: { post: Info }) => {
 };
 
 export async function getStaticPaths() {
-  const res = await fetch("http://localhost:3000/api");
-  const data = await res.json();
-  const posts = data.data;
+  await connectDB();
+  const data = await Posts.find().lean();
+  const posts = JSON.parse(JSON.stringify(data));
   const paths = posts.map((post: Info) => ({
     params: { id: post._id },
   }));
@@ -197,9 +199,9 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: { params: { id: string } }) {
-  const res = await fetch(`http://localhost:3000/api/${params.id}`);
-  const post = await res.json();
-  return { props: { post: post.data } };
+  await connectDB();
+  const post = await Posts.findById(params.id);
+  return { props: { post: JSON.parse(JSON.stringify(post)) } };
 }
 
 export default Edit;
